@@ -3,6 +3,7 @@ package configs
 import (
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
@@ -22,8 +23,33 @@ func LoadConfig() *Config {
 
 	return &Config{
 		Db: DbConfig{
-			Dsn: os.Getenv("DSN"),
+			Dsn: getString("DSN", ""),
 		},
 	}
 
+}
+
+func getString(key string, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
+}
+
+func getInt(key string, defaultValue int) int {
+	value := os.Getenv(key)
+	val, err := strconv.Atoi(value)
+	if err != nil {
+		return defaultValue
+	}
+	return val
+}
+
+func getBool(key string, defaultValue bool) bool {
+	value := os.Getenv(key)
+	val, err := strconv.ParseBool(value)
+	if err != nil {
+		return defaultValue
+	}
+	return val
 }
